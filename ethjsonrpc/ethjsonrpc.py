@@ -43,16 +43,19 @@ class EthJsonRpc:
         """
         return self._call('eth_sendRawTransaction', [raw_transaction])
 
-    def eth_call(self, from_address, to_address, data=None, default_block="latest"):
+    def eth_call(self, to_address, from_address=None, data=None, default_block="latest"):
         """
         Executes a new message call immediately without creating a transaction on the block chain.
         """
+        call_obj = {
+            'to': to_address
+        }
+        if from_address:
+            call_obj['from'] = from_address
+        if data:
+            call_obj['data'] = data
         params = [
-            {
-                'from': from_address,
-                'to': to_address,
-                'data': data
-            },
+            call_obj,
             default_block
         ]
         return self._call('eth_call', params)
