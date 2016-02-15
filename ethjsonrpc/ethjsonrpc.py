@@ -290,13 +290,13 @@ class EthJsonRpc:
         """
         Polling method for a filter, which returns an array of logs which occurred since last poll.
         """
-        return self._call('eth_getFilterChanges', [hex(filter_id)])
+        return self._call('eth_getFilterChanges', [filter_id])
 
     def eth_getFilterLogs(self, filter_id):
         """
         Returns an array of all logs matching filter with given id.
         """
-        return self._call('eth_getFilterLogs', [hex(filter_id)])
+        return self._call('eth_getFilterLogs', [filter_id])
 
     def eth_getLogs(self, filter_object):
         """
