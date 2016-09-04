@@ -4,9 +4,10 @@ import json
 
 class EthJsonRpc:
 
-    def __init__(self, host="localhost", port="8545"):
+    def __init__(self, host="localhost", port="8545", protocol="http"):
         self.host = host
         self.port = port
+        self.protocol = protocol
 
     def _call(self, method, params=None):
         if params is None:
@@ -18,7 +19,7 @@ class EthJsonRpc:
             'id': 0
         })
         headers = {'content-type': 'application/json'}
-        response = requests.post("http://{}:{}".format(self.host, self.port), data=data, headers=headers).json()
+        response = requests.post("{}://{}:{}".format(self.protocol, self.host, self.port), data=data, headers=headers).json()
         return response
 
     def eth_sendTransaction(self, from_address, to_address=None, data=None, value=0, gas=0, gas_price=0):
