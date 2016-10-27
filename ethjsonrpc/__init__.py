@@ -1,1 +1,1 @@
-from ethjsonrpc import EthJsonRpc
+from .ethjsonrpc import EthJsonRpc
