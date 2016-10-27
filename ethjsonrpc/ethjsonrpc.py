@@ -4,7 +4,7 @@ import json
 
 class EthJsonRpc:
 
-    def __init__(self, host="localhost", port="8545", protocol="http"):
+    def __init__(self, protocol="http", host="localhost", port="8545"):
         self.host = host
         self.port = port
         self.protocol = protocol
