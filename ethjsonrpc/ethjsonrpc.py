@@ -9,9 +9,7 @@ class EthJsonRpc:
         self.port = port
         self.protocol = protocol
 
-    def _call(self, method, params=None):
-        if params is None:
-            params = []
+    def _call(self, method, params=()):
         data = json.dumps({
             'jsonrpc': '2.0',
             'method': method,
@@ -19,24 +17,21 @@ class EthJsonRpc:
             'id': 0
         })
         headers = {'content-type': 'application/json'}
-        response = requests.post("{}://{}:{}".format(self.protocol, self.host, self.port), data=data, headers=headers).json()
-        return response
+        response = requests.post("{}://{}:{}".format(self.protocol, self.host, self.port), data=data, headers=headers)
+        return response.json()
 
-    def eth_sendTransaction(self, from_address, to_address=None, data=None, value=0, gas=0, gas_price=0):
+    def eth_sendTransaction(self, from_address, to_address=None, value=0, data=None, gas=0, gas_price=0):
         """
         Creates new message call transaction or a contract creation, if the data field contains code.
         """
-        params = {
+        return self._call('eth_sendTransaction', [{
             'from': from_address,
-            'gas': hex(gas) if gas else hex(0),
-            'gasPrice': hex(gas_price) if gas_price else hex(0),
-            'value': hex(value) if value else hex(0)
-        }
-        if to_address:
-            params['to'] = to_address
-        if data:
-            params['data'] = data
-        return self._call('eth_sendTransaction', [params])
+            'to': to_address,
+            'gas': hex(gas),
+            'gasPrice': hex(gas_price),
+            'value': hex(value),
+            'data': data
+        }])
 
     def eth_sendRawTransaction(self, raw_transaction):
         """
@@ -44,22 +39,18 @@ class EthJsonRpc:
         """
         return self._call('eth_sendRawTransaction', [raw_transaction])
 
-    def eth_call(self, to_address, from_address=None, data=None, default_block="latest"):
+    def eth_call(self, to_address, from_address=None, value=0, data=None, gas=0, gas_price=0, default_block="latest"):
         """
         Executes a new message call immediately without creating a transaction on the block chain.
         """
-        call_obj = {
-            'to': to_address
-        }
-        if from_address:
-            call_obj['from'] = from_address
-        if data:
-            call_obj['data'] = data
-        params = [
-            call_obj,
-            default_block
-        ]
-        return self._call('eth_call', params)
+        return self._call('eth_call', [{
+            'from': from_address,
+            'to': to_address,
+            'gas': hex(gas),
+            'gasPrice': hex(gas_price),
+            'value': hex(value),
+            'data': data
+        }, default_block])
 
     def eth_getBlock(self, block_number):
         """
